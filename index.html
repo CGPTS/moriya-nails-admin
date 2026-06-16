@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פאנל ניהול — Moriya Nails</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;600;700;900&family=Heebo:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin-style.css?v=20260616-moriya2">
+</head>
+<body>
+<div class="bg-grain" aria-hidden="true"></div>
+<div class="bg-orb bg-orb-1" aria-hidden="true"></div>
+<div class="bg-orb bg-orb-2" aria-hidden="true"></div>
+<div class="bg-orb bg-orb-3" aria-hidden="true"></div>
+
+<div class="login-screen" id="loginScreen">
+    <div class="login-card">
+        <div class="login-deco-line login-deco-line--top"></div>
+        <div class="login-deco-line login-deco-line--bottom"></div>
+        <div class="login-emblem">
+            <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+                <rect x="1" y="1" width="50" height="50" rx="13" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3"/>
+                <path d="M14 36V22l12-8 12 8v14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="21" y="28" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
+                <path d="M26 16v6M20 36h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <h1 class="login-title">Moriya Nails</h1>
+        <p class="login-sub">כניסה למערכת ניהול</p>
+        <div class="login-divider"><span></span><span>🔐</span><span></span></div>
+        <div class="login-form">
+            <label for="adminEmail">אימייל מנהל</label>
+            <div class="password-input-wrap">
+                <input type="email" id="adminEmail" placeholder="admin@example.com" autocomplete="username">
+                <span class="input-icon">📧</span>
+            </div>
+            <label for="adminPassword">סיסמה</label>
+            <div class="password-input-wrap">
+                <input type="password" id="adminPassword" placeholder="• • • • • •" autocomplete="current-password">
+                <span class="input-icon">🔑</span>
+            </div>
+            <button class="btn btn-login" onclick="adminLogin()">
+                <span>כניסה למערכת</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <p class="login-error" id="loginError" style="display:none;">❌ אימייל או סיסמה שגויים</p>
+        </div>
+        <p class="login-footer">Moriya Nails &copy; <span id="loginYear"></span></p>
+    </div>
+</div>
+
+<div class="admin-panel" id="adminPanel" style="display:none;">
+    <header class="admin-header">
+        <div class="header-inner">
+            <div class="header-brand">
+                <div class="brand-logo">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                        <path d="M6 22V13l8-5 8 5v9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="10.5" y="16" width="7" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/>
+                        <path d="M14 8v4M9 22h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">Moriya Nails</span>
+                    <span class="brand-tag">פאנל ניהול</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="header-date-chip">
+                    <span id="headerDayName"></span>
+                    <span class="header-date-sep">·</span>
+                    <span id="headerDateFull"></span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-icon-only" onclick="showKeyboardShortcuts()" title="קיצורי מקלדת">⌨️</button>
+                <button class="btn btn-notifications" onclick="toggleNotifications()">
+                    <span class="notif-icon">🔔</span>
+                    <span class="notif-label">התראות</span>
+                    <span class="notif-badge" id="notifCount">0</span>
+                </button>
+                <button class="btn btn-add-event" onclick="openAddEventModal()"><span>＋</span> תור חדש</button>
+                <button class="btn btn-logout" onclick="adminLogout()">⇤ יציאה</button>
+            </div>
+        </div>
+    </header>
+
+    <section class="stats-bar">
+        <div class="stat-card stat-total">
+            <div class="stat-icon">📊</div>
+            <span class="stat-number" id="statTotal">0</span>
+            <span class="stat-label">סה"כ תורים</span>
+            <div class="stat-shimmer"></div>
+        </div>
+        <div class="stat-card approved">
+            <div class="stat-icon">✅</div>
+            <span class="stat-number" id="statApproved">0</span>
+            <span class="stat-label">פעילות</span>
+            <div class="stat-shimmer"></div>
+        </div>
+        <div class="stat-card completed">
+            <div class="stat-icon">🏁</div>
+            <span class="stat-number" id="statCompleted">0</span>
+            <span class="stat-label">הסתיימו</span>
+            <div class="stat-shimmer"></div>
+        </div>
+        <div class="stat-card cancelled">
+            <div class="stat-icon">🚫</div>
+            <span class="stat-number" id="statCancelled">0</span>
+            <span class="stat-label">מבוטלות</span>
+            <div class="stat-shimmer"></div>
+        </div>
+        <div class="stat-card stat-revenue">
+            <div class="stat-icon">💰</div>
+            <span class="stat-number stat-number--sm" id="statRevenue">₪0</span>
+            <span class="stat-label">הכנסות כוללות</span>
+            <div class="stat-shimmer"></div>
+        </div>
+    </section>
+
+    <div class="tabs-wrap">
+        <nav class="tabs" role="tablist">
+            <button class="tab active" data-tab="calendar" onclick="switchTab('calendar')"><span class="tab-icon">📅</span><span>לוח שנה</span></button>
+            <button class="tab" data-tab="bookings" onclick="switchTab('bookings')"><span class="tab-icon">📋</span><span>תורים</span></button>
+            <button class="tab" data-tab="analytics" onclick="switchTab('analytics')"><span class="tab-icon">📊</span><span>ניתוח</span></button>
+        </nav>
+    </div>
+
+    <!-- CALENDAR TAB -->
+    <div class="tab-content active" id="calendarTab">
+        <div class="admin-card">
+            <div class="calendar-nav">
+                <button class="btn-nav" id="adminPrevMonth">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    חודש קודם
+                </button>
+                <div class="calendar-nav-title"><h2 id="adminCurrentMonth"></h2></div>
+                <button class="btn-nav btn-nav--next" id="adminNextMonth">
+                    חודש הבא
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+            </div>
+            <div class="calendar-legend">
+                <div class="legend-item"><span class="legend-dot green"></span><span>פנוי</span></div>
+                <div class="legend-item"><span class="legend-dot red"></span><span>תפוס</span></div>
+                <div class="legend-item"><span class="legend-dot orange"></span><span>ממתין לתשלום ●</span></div>
+                <div class="legend-item"><span class="legend-dot muted"></span><span>עבר</span></div>
+            </div>
+            <div class="admin-calendar-grid" id="adminCalendarGrid">
+                <div class="cal-header">ראשון</div>
+                <div class="cal-header">שני</div>
+                <div class="cal-header">שלישי</div>
+                <div class="cal-header">רביעי</div>
+                <div class="cal-header">חמישי</div>
+                <div class="cal-header">שישי</div>
+                <div class="cal-header">שבת</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOKINGS TAB -->
+    <div class="tab-content" id="bookingsTab">
+        <div class="admin-card">
+            <div class="filter-bar-advanced">
+                <div class="filter-row filter-row--primary">
+                    <div class="filter-select-wrap">
+                        <span class="filter-icon">⚙</span>
+                        <select id="statusFilter">
+                            <option value="active">תורים פעילות</option>
+                            <option value="all">כל התורים</option>
+                            <option value="completed">הסתיימו</option>
+                            <option value="cancelled">מבוטלות</option>
+                            <option value="no-deposit">ממתינים לתשלום</option>
+                        </select>
+                    </div>
+                    <div class="filter-search-wrap" style="flex:2">
+                        <span class="filter-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="חיפוש לפי שם, טלפון, מספר הזמנה…">
+                    </div>
+                    <button class="btn btn-secondary filter-clear-btn" onclick="clearFilters()">✕ אפס</button>
+                </div>
+                <div class="filter-row filter-row--secondary">
+                    <div class="filter-select-wrap">
+                        <span class="filter-icon">🎉</span>
+                        <select id="eventTypeFilter">
+                            <option value="">כל סוגי הטיפולים</option>
+                            <option value="לק ג'ל מבנה אנטומי">לק ג'ל מבנה אנטומי</option>
+                            <option value="לק ג'ל רגיל">לק ג'ל רגיל</option>
+                            <option value="לק ג'ל ברגליים">לק ג'ל ברגליים</option>
+                            <option value="הסרת לק ג'ל">הסרת לק ג'ל</option>
+                            <option value="מניקור בידיים">מניקור בידיים</option>
+                            <option value="השלמת ציפורן">השלמת ציפורן</option>
+                        </select>
+                    </div>
+                    <div class="filter-date-range">
+                        <div class="filter-select-wrap">
+                            <span class="filter-icon">📅</span>
+                            <input type="date" id="dateFromFilter">
+                        </div>
+                        <span class="date-range-sep">–</span>
+                        <div class="filter-select-wrap">
+                            <span class="filter-icon">📅</span>
+                            <input type="date" id="dateToFilter">
+                        </div>
+                    </div>
+                    <div class="sort-controls">
+                        <span class="sort-label">מיון:</span>
+                        <button class="sort-btn sort-active" data-sort="date" onclick="setSort('date')">תאריך <span class="sort-arrow">↑</span></button>
+                        <button class="sort-btn" data-sort="name" onclick="setSort('name')">שם <span class="sort-arrow"></span></button>
+                        <button class="sort-btn" data-sort="price" onclick="setSort('price')">מחיר <span class="sort-arrow"></span></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bulk-action-bar" id="bulkActionBar" style="display:none;">
+                <span id="bulkSelectedCount" class="bulk-count">0 נבחרו</span>
+                <button class="btn btn-secondary" onclick="selectAllBookings()">בחר הכל</button>
+                <button class="btn btn-whatsapp" onclick="bulkWhatsApp()">💬 WhatsApp לנבחרות</button>
+                <button class="btn btn-secondary" onclick="bulkExportSelected()">📥 ייצוא נבחרות</button>
+                <button class="btn btn-secondary" style="margin-right:auto" onclick="toggleBulkMode()">✕ ביטול</button>
+            </div>
+
+            <div class="results-bar">
+                <span class="result-count" id="resultCount"></span>
+                <div class="results-bar-actions">
+                    <button class="btn btn-secondary" id="bulkModeBtn" onclick="toggleBulkMode()">☑️ בחירה מרובה</button>
+                    <button class="btn btn-secondary" onclick="exportCSV()">📥 ייצוא CSV</button>
+                </div>
+            </div>
+
+            <div class="bookings-list" id="bookingsList" role="list"></div>
+        </div>
+    </div>
+
+    <!-- ANALYTICS TAB -->
+    <div class="tab-content" id="analyticsTab">
+        <div class="admin-card">
+            <div class="analytics-loading"><span>📊</span> טוען נתונים…</div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATIONS SIDEBAR -->
+    <aside class="notifications-sidebar" id="notificationsSidebar">
+        <div class="sidebar-header">
+            <h2>🔔 התראות</h2>
+            <button class="btn-close" onclick="toggleNotifications()">✕</button>
+        </div>
+        <div class="sidebar-content" id="notificationsList"></div>
+    </aside>
+</div>
+
+<!-- BOOKING DETAIL MODAL -->
+<div class="modal-overlay" id="bookingModal" style="display:none;">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h2 id="modalTitle">פרטי הזמנה</h2>
+            <button class="btn-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-actions" id="modalActions"></div>
+    </div>
+</div>
+
+<!-- ADD EVENT MODAL -->
+<div class="modal-overlay" id="addEventModal" style="display:none;">
+    <div class="modal-card modal-card-large">
+        <div class="modal-header">
+            <h2>➕ הוספת תור ידנית</h2>
+            <button class="btn-close" onclick="closeAddEventModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <form id="addEventForm" onsubmit="return false;" novalidate>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="eventFullName">👤 שם מלא <span class="required">*</span></label>
+                        <input type="text" id="eventFullName" required placeholder="שם מלא">
+                    </div>
+                    <div class="form-group">
+                        <label for="eventPhone">📱 טלפון <span class="required">*</span></label>
+                        <input type="tel" id="eventPhone" required placeholder="050-0000000">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="eventType">🎉 סוג טיפול <span class="required">*</span></label>
+                        <select id="eventType" required>
+                            <option value="">בחרי סוג טיפול</option>
+                            <option value="לק ג'ל מבנה אנטומי">לק ג'ל מבנה אנטומי</option>
+                            <option value="לק ג'ל רגיל">לק ג'ל רגיל</option>
+                            <option value="לק ג'ל ברגליים">לק ג'ל ברגליים</option>
+                            <option value="הסרת לק ג'ל">הסרת לק ג'ל</option>
+                            <option value="מניקור בידיים">מניקור בידיים</option>
+                            <option value="השלמת ציפורן">השלמת ציפורן</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventResident">🏠 סיווג לקוחה</label>
+                        <select id="eventResident">
+                            <option value="לקוחה">לקוחה</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="eventDate">📅 תאריך <span class="required">*</span></label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventSlot">⏰ שעה <span class="required">*</span></label>
+                        <select id="eventSlot" required>
+                            <option value="">בחרי שעה</option>
+                            <option value="10-00">10:00 (10:00-11:00)</option>
+                            <option value="11-00">11:00 (11:00-12:00)</option>
+                            <option value="12-00">12:00 (12:00-13:00)</option>
+                            <option value="13-00">13:00 (13:00-14:00)</option>
+                            <option value="14-00">14:00 (14:00-15:00)</option>
+                            <option value="15-00">15:00 (15:00-16:00)</option>
+                            <option value="16-00">16:00 (16:00-17:00)</option>
+                        </select>
+                    </div>
+                </div>
+                <input type="checkbox" id="eventProjector" hidden>
+                <div class="form-group">
+                    <label for="eventReceiptUpload">📎 קובץ / אסמכתא (אופציונלי)</label>
+                    <label class="admin-upload-btn" for="eventReceiptUpload">
+                        <span>לחצו להעלאת תמונה</span>
+                        <input type="file" id="eventReceiptUpload" accept="image/*">
+                    </label>
+                    <div class="admin-upload-preview" id="eventReceiptPreview" style="display:none;">
+                        <p>✅ <span id="eventReceiptFileName"></span></p>
+                        <img id="eventReceiptPreviewImg" src="" alt="תצוגה מקדימה אסמכתא">
+                    </div>
+                </div>
+                <div class="form-group form-group--price">
+                    <label>💰 מחיר משוער</label>
+                    <div class="price-breakdown" id="priceBreakdown">בחרי סוג טיפול</div>
+                    <input type="number" id="eventPrice" placeholder="יחושב אוטומטית" min="0" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="eventNotes">📝 הערות</label>
+                    <textarea id="eventNotes" rows="3" placeholder="הערות נוספות…"></textarea>
+                </div>
+                <div id="slotAvailabilityMsg" class="availability-msg" style="display:none;"></div>
+            </form>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-approve" onclick="submitNewEvent()">✅ הוסף תור</button>
+            <button class="btn btn-secondary" onclick="closeAddEventModal()">ביטול</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js?v=20260616-moriya3"></script>
+<script src="js/admin-app.js?v=20260616-moriya2"></script>
+<script>
+(function(){
+    var lyEl = document.getElementById('loginYear');
+    if(lyEl) lyEl.textContent = new Date().getFullYear();
+    function updateDate(){
+        var now=new Date();
+        var days=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+        var months=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+        var dn=document.getElementById('headerDayName');
+        var df=document.getElementById('headerDateFull');
+        if(dn) dn.textContent='יום '+days[now.getDay()];
+        if(df) df.textContent=now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear();
+    }
+    updateDate(); setInterval(updateDate,60000);
+})();
+</script>
+</body>
+</html>
